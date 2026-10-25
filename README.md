@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <div align="center">
-  <h1>GENAITUBES</h1>
+  <h1>GEN AI Project 1</h1>
   <p><strong>A class-conditional GAN built from scratch on Fashion-MNIST</strong></p>
   <p>Course project for <strong>CAK4KBB3 — Vibe Coding Generative AI from Scratch</strong><br>
   Group <strong>A Day in Ali</strong></p>
