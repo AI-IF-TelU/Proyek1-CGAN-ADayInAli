@@ -307,7 +307,7 @@ handling — are recorded in the LLM interaction log as the project progresses.
 ## Roadmap
 
 - [x] Repository scaffold, `.gitignore`, and README
-- [ ] Create the project virtual environment and install `torchvision`
+- [x] Create the project virtual environment and install `torchvision`
 - [ ] Implement `src/data.py` and verify Fashion-MNIST shapes/normalization
 - [ ] Implement `src/models.py` and shape tests
 - [ ] Implement `src/train.py` with checkpointing and loss curves
