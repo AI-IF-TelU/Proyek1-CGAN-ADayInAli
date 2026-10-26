@@ -309,7 +309,7 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Repository scaffold, `.gitignore`, and README
 - [x] Create the project virtual environment and install `torchvision`
 - [x] Implement `src/data.py` and verify Fashion-MNIST shapes/normalization
-- [ ] Implement `src/models.py` and shape tests
+- [x] Implement `src/models.py` and shape tests
 - [ ] Implement `src/train.py` with checkpointing and loss curves
 - [ ] Implement `src/sample.py` with a fixed noise/label grid
 - [ ] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
