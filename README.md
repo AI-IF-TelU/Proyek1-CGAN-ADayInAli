@@ -12,9 +12,9 @@
 [![Dataset][dataset-shield]][dataset-url]
 [![Status][status-shield]][status-url]
 
-> **Project status:** the data pipeline, models, and training loop are implemented
-> and tested. Sampling and evaluation scripts are **not implemented yet**; their
-> commands under [Usage](#usage) are planned entry points.
+> **Project status:** the data pipeline, models, training loop, sampling, and
+> evaluation are implemented and tested, and a 30-epoch baseline has been trained
+> (see [Results](#results)). The LLM interaction log and final report are in progress.
 
 ## Table of Contents
 
@@ -25,6 +25,7 @@
 - [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Training and Evaluation Plan](#training-and-evaluation-plan)
+- [Results](#results)
 - [Scope](#scope)
 - [Team](#team)
 - [Project Workflow](#project-workflow)
@@ -136,14 +137,15 @@ grid is reused across runs so sample grids are directly comparable.
 │   ├── data.py                ← loaders and fixed sample grid
 │   ├── models.py              ← Generator and Discriminator
 │   ├── train.py               ← adversarial loop and checkpoints
-│   ├── sample.py              ← planned: generate grids from a checkpoint
-│   ├── evaluate.py            ← planned: conditional accuracy and mode coverage
-│   ├── plots.py               ← loss curves (sample figures planned)
+│   ├── sample.py              ← generate grids from a checkpoint
+│   ├── evaluate.py            ← conditional accuracy and mode coverage
+│   ├── plots.py               ← loss curves
 │   └── utils.py               ← seeding, device, checkpoint helpers
 ├── tests/
 │   ├── test_data.py           ← shapes, range, label mapping
 │   ├── test_models.py         ← forward-pass shape checks
-│   └── test_train.py          ← training step, outputs, and resume
+│   ├── test_train.py          ← training step, outputs, and resume
+│   └── test_sample_evaluate.py ← sampling and evaluation metrics
 ├── logs/
 │   └── LOG_INTERAKSI_LLM.md   ← required interaction log (to be created)
 ├── references/
@@ -248,23 +250,29 @@ Training writes, under `outputs/`:
 One epoch at batch size `128` took about 80 seconds on a laptop CPU, so the
 default 30 epochs take roughly 40 minutes.
 
-> The commands below are **planned**. They will fail until `src/sample.py` and
-> `src/evaluate.py` are implemented.
-
 ```bash
-# Generate a sample grid from a checkpoint
+# Generate a sample grid from a checkpoint (one row per class)
 python -m src.sample --checkpoint outputs/checkpoints/ckpt.pt
+
+# Only some classes, more samples per row (class ids 0-9, see Dataset)
+python -m src.sample --checkpoint outputs/checkpoints/ckpt.pt --classes 5 8 --per-class 16
 
 # Evaluate conditional accuracy and mode coverage
 python -m src.evaluate --checkpoint outputs/checkpoints/ckpt.pt
 ```
+
+`src.sample` writes `outputs/samples/sample_epoch_NNN.png`. `src.evaluate` trains
+the reference classifier on first use (about 1.5 minutes, cached in
+`outputs/checkpoints/classifier.pt`), then writes `outputs/logs/eval_<checkpoint>.json`
+and a confusion-matrix figure `outputs/logs/confusion_<checkpoint>.png`.
 
 Recommended workflow: explore in `notebooks/`, move reusable logic into `src/`,
 then run the scripts end to end.
 
 `notebooks/02-ad-cgan-experiments.ipynb` runs the same training from Jupyter,
 resumes from the latest checkpoint, and shows loss curves, fixed-grid progress,
-and fresh samples per class. Install `ipykernel` in `.venv` to use it as a kernel.
+fresh samples per class, and evaluation metrics across checkpoints. Install
+`ipykernel` in `.venv` to use it as a kernel.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -290,6 +298,43 @@ and fresh samples per class. Install `ipykernel` in `.venv` to use it as a kerne
   than collapsing to a single template; combine classifier-prediction spread
   with visual inspection of the fixed grid.
 - **No FID:** Inception is too slow on this CPU-only setup, so FID is not used.
+
+`src/evaluate.py` implements this with a small CNN (two conv layers, 6 epochs on
+the training set) and 1,000 generated images per class. Mode coverage is measured
+two ways: the normalized entropy of predicted classes (1.0 = all classes equally
+represented) and a per-class diversity ratio, the mean pairwise distance between
+generated images in the classifier's feature space divided by the same value for
+real test images (about 1.0 = as varied as real data, near 0 = collapse).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Results
+
+Baseline run: 30 epochs, batch size 128, lr `2e-4`, CPU (~80 s/epoch). Full
+outputs, figures, and notes are in `notebooks/02-ad-cgan-experiments.ipynb`.
+
+| Metric | Value |
+| --- | ---: |
+| Classifier accuracy on real test images (ceiling) | 0.913 |
+| Conditional accuracy on generated images | **0.912** |
+| Prediction entropy (1.0 = balanced) | 0.998 |
+| Mean diversity ratio (1.0 = real) | 0.95 |
+
+| Epoch | 1 | 5 | 10 | 20 | 30 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Conditional accuracy | 0.775 | 0.845 | 0.901 | 0.912 | 0.912 |
+| Diversity ratio | 0.65 | 0.86 | 0.90 | 0.94 | 0.95 |
+
+- The generator follows the requested label about as reliably as the classifier
+  recognizes real images; most of the gain happens by epoch 10.
+- Trouser, Ankle boot, Bag, Sandal, and Sneaker score 0.96–0.99. Pullover (0.74,
+  often read as Coat) and Shirt (0.77) are weakest; the classifier confuses the
+  same classes on real data.
+- No mode collapse: every class is represented and within-class variety is close
+  to real data.
+- The discriminator slowly gains on the generator (D accuracy 0.86 → 0.93), so
+  the planned variants target D: no BatchNorm on its first layer, or a lower D
+  learning rate.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -341,8 +386,8 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Implement `src/data.py` and verify Fashion-MNIST shapes/normalization
 - [x] Implement `src/models.py` and shape tests
 - [x] Implement `src/train.py` with checkpointing and loss curves
-- [ ] Implement `src/sample.py` with a fixed noise/label grid
-- [ ] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
+- [x] Implement `src/sample.py` with a fixed noise/label grid
+- [x] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
 - [x] Run the first full training and record metrics
 - [ ] Complete `logs/LOG_INTERAKSI_LLM.md` and the final report
 
