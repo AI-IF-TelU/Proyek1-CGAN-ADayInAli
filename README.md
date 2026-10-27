@@ -129,7 +129,7 @@ grid is reused across runs so sample grids are directly comparable.
 │   └── raw/                   ← Fashion-MNIST download (ignored)
 ├── notebooks/
 │   ├── 01-ad-data-exploration.ipynb      ← planned
-│   └── 02-ad-cgan-experiments.ipynb      ← planned
+│   └── 02-ad-cgan-experiments.ipynb      ← train, loss curves, sample grids
 ├── src/
 │   ├── __init__.py
 │   ├── config.py              ← paths, seeds, hyperparameters
@@ -261,6 +261,10 @@ python -m src.evaluate --checkpoint outputs/checkpoints/ckpt.pt
 
 Recommended workflow: explore in `notebooks/`, move reusable logic into `src/`,
 then run the scripts end to end.
+
+`notebooks/02-ad-cgan-experiments.ipynb` runs the same training from Jupyter,
+resumes from the latest checkpoint, and shows loss curves, fixed-grid progress,
+and fresh samples per class. Install `ipykernel` in `.venv` to use it as a kernel.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
