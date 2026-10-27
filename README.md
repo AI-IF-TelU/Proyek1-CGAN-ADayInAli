@@ -12,9 +12,9 @@
 [![Dataset][dataset-shield]][dataset-url]
 [![Status][status-shield]][status-url]
 
-> **Project status:** repository scaffold and documentation only. The data pipeline,
-> models, training loop, and evaluation scripts are **not implemented yet**. Every
-> command under [Usage](#usage) is a planned entry point, not a working feature.
+> **Project status:** the data pipeline, models, and training loop are implemented
+> and tested. Sampling and evaluation scripts are **not implemented yet**; their
+> commands under [Usage](#usage) are planned entry points.
 
 ## Table of Contents
 
@@ -131,18 +131,19 @@ grid is reused across runs so sample grids are directly comparable.
 │   ├── 01-ad-data-exploration.ipynb      ← planned
 │   └── 02-ad-cgan-experiments.ipynb      ← planned
 ├── src/
-│   ├── __init__.py            ← planned
-│   ├── config.py              ← planned: paths, seeds, hyperparameters
-│   ├── data.py                ← planned: loaders and fixed sample grid
-│   ├── models.py              ← planned: Generator and Discriminator
-│   ├── train.py               ← planned: adversarial loop and checkpoints
+│   ├── __init__.py
+│   ├── config.py              ← paths, seeds, hyperparameters
+│   ├── data.py                ← loaders and fixed sample grid
+│   ├── models.py              ← Generator and Discriminator
+│   ├── train.py               ← adversarial loop and checkpoints
 │   ├── sample.py              ← planned: generate grids from a checkpoint
 │   ├── evaluate.py            ← planned: conditional accuracy and mode coverage
-│   ├── plots.py               ← planned: loss curves and sample figures
-│   └── utils.py               ← planned: seeding, device, checkpoint helpers
+│   ├── plots.py               ← loss curves (sample figures planned)
+│   └── utils.py               ← seeding, device, checkpoint helpers
 ├── tests/
-│   ├── test_data.py           ← planned: shapes, range, label mapping
-│   └── test_models.py         ← planned: forward-pass shape checks
+│   ├── test_data.py           ← shapes, range, label mapping
+│   ├── test_models.py         ← forward-pass shape checks
+│   └── test_train.py          ← training step, outputs, and resume
 ├── logs/
 │   └── LOG_INTERAKSI_LLM.md   ← required interaction log (to be created)
 ├── references/
@@ -220,12 +221,37 @@ Windows, activate with `.venv\Scripts\activate` instead.
 
 ## Usage
 
-> These commands are **planned**. They will fail until `src/` is implemented.
-
 ```bash
 # Train the conditional GAN
 python -m src.train --epochs 30 --batch-size 128
 
+# Continue a stopped run (--epochs is the last epoch to reach)
+python -m src.train --resume outputs/checkpoints/ckpt.pt --epochs 30
+
+# Quick smoke test: 1 epoch, 20 batches
+python -m src.train --epochs 1 --max-batches 20
+
+# Run all tests (test_data downloads Fashion-MNIST on first run)
+python -m unittest discover -s tests
+```
+
+Training writes, under `outputs/`:
+
+- `checkpoints/ckpt.pt` — latest checkpoint, overwritten every epoch.
+- `checkpoints/ckpt_epoch_NNN.pt` — kept on the first epoch of each run, every
+  `--sample-every` epochs (default 5), and the last epoch.
+- `samples/epoch_NNN.png` — fixed noise/label grid, one row per class, saved on
+  the same epochs.
+- `logs/history.json` and `logs/loss_curves.png` — per-epoch mean `loss_d`,
+  `loss_g`, discriminator accuracy, `D(x)`, and `D(G(z))`.
+
+One epoch at batch size `128` took about 80 seconds on a laptop CPU, so the
+default 30 epochs take roughly 40 minutes.
+
+> The commands below are **planned**. They will fail until `src/sample.py` and
+> `src/evaluate.py` are implemented.
+
+```bash
 # Generate a sample grid from a checkpoint
 python -m src.sample --checkpoint outputs/checkpoints/ckpt.pt
 
@@ -310,7 +336,7 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Create the project virtual environment and install `torchvision`
 - [x] Implement `src/data.py` and verify Fashion-MNIST shapes/normalization
 - [x] Implement `src/models.py` and shape tests
-- [ ] Implement `src/train.py` with checkpointing and loss curves
+- [x] Implement `src/train.py` with checkpointing and loss curves
 - [ ] Implement `src/sample.py` with a fixed noise/label grid
 - [ ] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
 - [ ] Run the first full training and record metrics
@@ -345,5 +371,5 @@ and libraries retain their own licenses.
 [pytorch-url]: https://pytorch.org/
 [dataset-shield]: https://img.shields.io/badge/Dataset-Fashion--MNIST-FF6F00?style=for-the-badge
 [dataset-url]: https://github.com/zalandoresearch/fashion-mnist
-[status-shield]: https://img.shields.io/badge/Status-Scaffolding-yellow?style=for-the-badge
+[status-shield]: https://img.shields.io/badge/Status-In%20Progress-yellow?style=for-the-badge
 [status-url]: #roadmap
