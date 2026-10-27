@@ -343,7 +343,7 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Implement `src/train.py` with checkpointing and loss curves
 - [ ] Implement `src/sample.py` with a fixed noise/label grid
 - [ ] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
-- [ ] Run the first full training and record metrics
+- [x] Run the first full training and record metrics
 - [ ] Complete `logs/LOG_INTERAKSI_LLM.md` and the final report
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
