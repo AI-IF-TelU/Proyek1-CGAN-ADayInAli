@@ -112,6 +112,7 @@ def train(
     resume: Path | str | None = None,
     seed: int = SEED,
     max_batches: int | None = None,
+    progress: bool = True,
 ) -> dict[str, list[float]]:
     """Train the cGAN and return per-epoch mean metrics.
 
@@ -144,7 +145,7 @@ def train(
         sums = dict.fromkeys(HISTORY_KEYS, 0.0)
         steps = 0
         total = len(loader) if max_batches is None else min(len(loader), max_batches)
-        bar = tqdm(loader, total=total, desc=f"Epoch {epoch}/{epochs}", leave=False)
+        bar = tqdm(loader, total=total, desc=f"Epoch {epoch}/{epochs}", leave=False, disable=not progress)
         for real, labels in bar:
             if max_batches is not None and steps >= max_batches:
                 break
