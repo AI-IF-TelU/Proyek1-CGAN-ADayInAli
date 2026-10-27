@@ -2,9 +2,6 @@
 
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")  # write files only; no display needed
 import matplotlib.pyplot as plt
 
 
