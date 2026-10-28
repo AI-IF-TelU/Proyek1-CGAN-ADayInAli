@@ -293,8 +293,7 @@ Report-ready copies of the existing outputs are also written to
 - `evaluation_metrics.png` — metrics-by-checkpoint chart from the notebook
 
 The checked-in baseline was run on CUDA (torch `2.14.1+cu130`). The model also
-runs on CPU; the earlier 1.06M-parameter reference took about 80 s/epoch on a
-laptop CPU, so 30 CPU epochs are roughly 40 minutes. Measure your first epoch.
+runs on CPU; measure your first epoch and plan the run length accordingly.
 
 ```bash
 # Generate a sample grid from a checkpoint (one row per class)
