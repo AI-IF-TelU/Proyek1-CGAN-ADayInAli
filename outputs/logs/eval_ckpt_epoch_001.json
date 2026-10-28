@@ -1,0 +1,183 @@
+{
+  "checkpoint": "/home/mclr/Documents/Projects/Proyek1-CGAN-ADayInAli/outputs/checkpoints/ckpt_epoch_001.pt",
+  "epoch": 1,
+  "samples_per_class": 1000,
+  "classifier_test_accuracy": 0.9129,
+  "conditional_accuracy": 0.7372,
+  "prediction_entropy": 0.9278640747070312,
+  "mean_diversity_ratio": 0.6484747981073424,
+  "per_class": {
+    "T-shirt/top": {
+      "conditional_accuracy": 0.7400000095367432,
+      "classifier_accuracy_on_real": 0.8640000224113464,
+      "diversity_ratio": 0.5390129425461002
+    },
+    "Trouser": {
+      "conditional_accuracy": 0.9940000176429749,
+      "classifier_accuracy_on_real": 0.9760000109672546,
+      "diversity_ratio": 0.7717190343555854
+    },
+    "Pullover": {
+      "conditional_accuracy": 0.00800000037997961,
+      "classifier_accuracy_on_real": 0.8190000057220459,
+      "diversity_ratio": 0.625251043899796
+    },
+    "Dress": {
+      "conditional_accuracy": 0.7239999771118164,
+      "classifier_accuracy_on_real": 0.9319999814033508,
+      "diversity_ratio": 0.5486741280011531
+    },
+    "Coat": {
+      "conditional_accuracy": 0.6959999799728394,
+      "classifier_accuracy_on_real": 0.9070000052452087,
+      "diversity_ratio": 0.5225610137924097
+    },
+    "Sandal": {
+      "conditional_accuracy": 0.9589999914169312,
+      "classifier_accuracy_on_real": 0.9750000238418579,
+      "diversity_ratio": 0.7389555154883202
+    },
+    "Shirt": {
+      "conditional_accuracy": 0.8410000205039978,
+      "classifier_accuracy_on_real": 0.7300000190734863,
+      "diversity_ratio": 0.5392629442793315
+    },
+    "Sneaker": {
+      "conditional_accuracy": 0.43799999356269836,
+      "classifier_accuracy_on_real": 0.9760000109672546,
+      "diversity_ratio": 0.7262507340786803
+    },
+    "Bag": {
+      "conditional_accuracy": 0.9860000014305115,
+      "classifier_accuracy_on_real": 0.9829999804496765,
+      "diversity_ratio": 0.6751300596907075
+    },
+    "Ankle boot": {
+      "conditional_accuracy": 0.9860000014305115,
+      "classifier_accuracy_on_real": 0.9670000076293945,
+      "diversity_ratio": 0.797930564941341
+    }
+  },
+  "confusion_matrix": [
+    [
+      740,
+      0,
+      0,
+      149,
+      1,
+      0,
+      109,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      994,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0
+    ],
+    [
+      0,
+      0,
+      8,
+      2,
+      434,
+      0,
+      554,
+      0,
+      2,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      724,
+      267,
+      0,
+      9,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      696,
+      0,
+      304,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      959,
+      0,
+      0,
+      41,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      46,
+      88,
+      0,
+      841,
+      0,
+      23,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      466,
+      0,
+      438,
+      62,
+      34
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      13,
+      0,
+      986,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      3,
+      5,
+      3,
+      2,
+      986
+    ]
+  ]
+}

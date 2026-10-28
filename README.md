@@ -160,14 +160,14 @@ grid is reused across runs so sample grids are directly comparable.
 │   └── experiment_protocol.md ← planned
 ├── reports/
 │   └── figures/               ← report copies: loss curve, grids, confusion matrix, metrics
-└── outputs/                   ← generated artifacts (ignored)
-    ├── checkpoints/
-    ├── samples/
-    └── logs/
+└── outputs/                   ← baseline run artifacts (tracked)
+    ├── checkpoints/           ← model weights (*.pt, ignored)
+    ├── samples/               ← fixed-grid PNGs per epoch
+    └── logs/                  ← history, loss curve, eval JSON, confusion
 ```
 
 Tracked empty directories contain a `.gitkeep` placeholder because Git does not
-track empty directories. `data/` and `outputs/` are intentionally ignored.
+track empty directories. `data/` is intentionally ignored.
 
 **What lives where:**
 
@@ -179,7 +179,8 @@ track empty directories. `data/` and `outputs/` are intentionally ignored.
   references; no code blocks are copied.
 - `reports/figures/` holds report-ready copies of the loss curve, sample grids,
   confusion matrix, and evaluation metrics.
-- `outputs/` holds checkpoints, full sample grids, and raw training logs.
+- `outputs/` holds the committed baseline sample grids, loss curve, history, and
+  evaluation logs; model weights (`*.pt`) stay local and ignored.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -238,8 +239,8 @@ Windows, activate with `.venv\Scripts\activate` instead.
 
 ### Fresh run vs. resume
 
-`outputs/` is ignored and safe to delete. For a clean run, remove it **before**
-starting:
+`outputs/` is safe to delete: the committed baseline artifacts are in Git, and a
+fresh run regenerates them. For a clean run, remove it **before** starting:
 
 ```bash
 rm -rf outputs

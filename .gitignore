@@ -3,10 +3,8 @@ __pycache__/
 .DS_Store
 .venv/
 data/
-outputs/
 *.pt
 *.pth
-AGENTS.md
 GIT_COMMIT_GUIDE.md
 BLANK_README.md
 EXAMPLE_README.md
