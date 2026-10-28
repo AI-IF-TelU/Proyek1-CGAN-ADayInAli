@@ -12,9 +12,10 @@
 [![Dataset][dataset-shield]][dataset-url]
 [![Status][status-shield]][status-url]
 
-> **Project status:** the data pipeline, models, training loop, sampling, and
-> evaluation are implemented and tested, and a 30-epoch baseline has been trained
-> (see [Results](#results)). The LLM interaction log and final report are in progress.
+> **Project status:** the data pipeline, models, training loop, sampling,
+> evaluation, tests, and report figures are implemented. A 30-epoch baseline has
+> been trained and evaluated (see [Results](#results)). Per-member LLM logs exist;
+> log consolidation and the final report are in progress.
 
 ## Table of Contents
 
@@ -30,6 +31,7 @@
 - [Team](#team)
 - [Project Workflow](#project-workflow)
 - [Roadmap](#roadmap)
+- [References](#references)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -129,8 +131,8 @@ grid is reused across runs so sample grids are directly comparable.
 ├── data/
 │   └── raw/                   ← Fashion-MNIST download (ignored)
 ├── notebooks/
-│   ├── 01-ad-data-exploration.ipynb      ← planned
-│   └── 02-ad-cgan-experiments.ipynb      ← train, loss curves, sample grids
+│   ├── 01-ad-data-exploration.ipynb      ← planned; not implemented
+│   └── 02-ad-cgan-experiments.ipynb      ← active: training, figures, evaluation
 ├── src/
 │   ├── __init__.py
 │   ├── config.py              ← paths, seeds, hyperparameters
@@ -140,21 +142,24 @@ grid is reused across runs so sample grids are directly comparable.
 │   ├── sample.py              ← generate grids from a checkpoint
 │   ├── evaluate.py            ← conditional accuracy and mode coverage
 │   ├── plots.py               ← loss curves
-│   └── utils.py               ← seeding, device, checkpoint helpers
+│   └── utils.py               ← seeding, device, checkpoint helpers, report copies
 ├── tests/
 │   ├── test_data.py           ← shapes, range, label mapping
 │   ├── test_models.py         ← forward-pass shape checks
 │   ├── test_train.py          ← training step, outputs, and resume
 │   └── test_sample_evaluate.py ← sampling and evaluation metrics
 ├── logs/
-│   └── LOG_INTERAKSI_LLM.md   ← required interaction log (to be created)
+│   ├── ALI_LOG_INTERAKSI_LLM.md
+│   ├── DAVU_LOG_INTERAKSI_LLM.md
+│   ├── MALIKI_LOG_INTERAKSI_LLM.md
+│   └── MORENO_LOG_INTERAKSI_LLM.md
 ├── references/
-│   └── README.md              ← planned: paper, dataset, and API links
+│   └── README.md              ← annotated paper, dataset, and API links
 ├── docs/
 │   ├── architecture.md        ← planned
 │   └── experiment_protocol.md ← planned
 ├── reports/
-│   └── figures/               ← report copies: loss curve, final grid, confusion matrix
+│   └── figures/               ← report copies: loss curve, grids, confusion matrix, metrics
 └── outputs/                   ← generated artifacts (ignored)
     ├── checkpoints/
     ├── samples/
@@ -166,11 +171,14 @@ track empty directories. `data/` and `outputs/` are intentionally ignored.
 
 **What lives where:**
 
-- `src/` contains reusable code; notebooks are for exploration only.
-- `logs/LOG_INTERAKSI_LLM.md` is the graded LLM interaction log.
-- `references/` holds source links and notes, never copied code blocks.
-- `reports/figures/` holds report-ready copies of the loss curve, final sample
-  grid, and final confusion matrix.
+- `src/` contains reusable code; `02` is the active notebook, while `01` remains
+  planned and is not implemented.
+- `logs/` holds the per-member LLM interaction logs (Ali, Davu, Maliki,
+  Moreno); a unified `LOG_INTERAKSI_LLM.md` is not yet created.
+- `references/README.md` holds the annotated paper, dataset, and API
+  references; no code blocks are copied.
+- `reports/figures/` holds report-ready copies of the loss curve, sample grids,
+  confusion matrix, and evaluation metrics.
 - `outputs/` holds checkpoints, full sample grids, and raw training logs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -193,9 +201,9 @@ track empty directories. `data/` and `outputs/` are intentionally ignored.
 | Disk | ~3 GB free | 5 GB |
 | GPU | Not required | Optional |
 
-Training runs on CPU. Runtime depends on your CPU and batch size; use batch
-size `32` on lower-end machines. Checkpoint after every epoch so a slow run
-can resume.
+Training runs on CPU by default; CUDA is optional. Runtime depends on your
+CPU/GPU and batch size; use batch size `32` on lower-end machines. Checkpoint
+after every epoch so a slow run can resume.
 
 ### Installation
 
@@ -211,6 +219,10 @@ uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cp
 uv pip install matplotlib tqdm
 ```
 
+For a CUDA build, install the matching PyTorch/torchvision pair from the
+[official selector](https://pytorch.org/get-started/locally/) instead; the
+notebook selects CUDA automatically.
+
 Verify the environment:
 
 ```bash
@@ -224,12 +236,33 @@ Windows, activate with `.venv\Scripts\activate` instead.
 
 ## Usage
 
+### Fresh run vs. resume
+
+`outputs/` is ignored and safe to delete. For a clean run, remove it **before**
+starting:
+
 ```bash
-# Train the conditional GAN
+rm -rf outputs
+```
+
+On Windows PowerShell, use `Remove-Item -Recurse -Force outputs` instead.
+
+- **Notebook:** `RESUME=True` loads `outputs/checkpoints/ckpt.pt`. If that file
+  exists, training resumes instead of starting over. Clean `outputs/` for a fresh
+  run, or raise `EPOCHS` to continue from the checkpoint.
+- **CLI:** `src.train` starts fresh unless `--resume` is passed; cleaning
+  `outputs/` is still recommended so old epoch checkpoints, samples, and logs do
+  not mix with the new run.
+- `data/raw/` is separate and can stay; Fashion-MNIST does not need to be
+  downloaded again.
+
+```bash
+# Clean run from epoch 1
+rm -rf outputs
 python -m src.train --epochs 30 --batch-size 128
 
-# Continue a stopped run (--epochs is the last epoch to reach)
-python -m src.train --resume outputs/checkpoints/ckpt.pt --epochs 30
+# Continue a stopped run (--epochs must be above the checkpoint epoch)
+python -m src.train --resume outputs/checkpoints/ckpt.pt --epochs 40
 
 # Quick smoke test: 1 epoch, 20 batches
 python -m src.train --epochs 1 --max-batches 20
@@ -248,15 +281,20 @@ Training writes, under `outputs/`:
 - `logs/history.json` and `logs/loss_curves.png` — per-epoch mean `loss_d`,
   `loss_g`, discriminator accuracy, `D(x)`, and `D(G(z))`.
 
-Report-ready copies of those existing figures are also written to
+Report-ready copies of the existing outputs are also written to
 `reports/figures/`:
 
 - `loss_curves.png` — copy of `outputs/logs/loss_curves.png`
 - `sample_grid_final.png` — final-epoch grid from `outputs/samples/`
 - `confusion_matrix_final.png` — copy of `outputs/logs/confusion_ckpt.png`
+- `real_samples.png` — real-data batch grid from the notebook
+- `sample_grid_progress.png` — epoch 1/10/20/30 grids from the notebook
+- `fresh_samples_per_class.png` — fresh per-class samples from the notebook
+- `evaluation_metrics.png` — metrics-by-checkpoint chart from the notebook
 
-One epoch at batch size `128` took about 80 seconds on a laptop CPU, so the
-default 30 epochs take roughly 40 minutes.
+The checked-in baseline was run on CUDA (torch `2.14.1+cu130`). The model also
+runs on CPU; the earlier 1.06M-parameter reference took about 80 s/epoch on a
+laptop CPU, so 30 CPU epochs are roughly 40 minutes. Measure your first epoch.
 
 ```bash
 # Generate a sample grid from a checkpoint (one row per class)
@@ -277,10 +315,12 @@ and a confusion-matrix figure `outputs/logs/confusion_<checkpoint>.png`.
 Recommended workflow: explore in `notebooks/`, move reusable logic into `src/`,
 then run the scripts end to end.
 
-`notebooks/02-ad-cgan-experiments.ipynb` runs the same training from Jupyter,
-resumes from the latest checkpoint, and shows loss curves, fixed-grid progress,
-fresh samples per class, and evaluation metrics across checkpoints. Install
-`ipykernel` in `.venv` to use it as a kernel.
+`notebooks/02-ad-cgan-experiments.ipynb` is the active notebook: it runs the same
+training from Jupyter, resumes from the latest checkpoint, saves the report
+figures, and shows loss curves, fixed-grid progress, fresh samples per class,
+and evaluation metrics across checkpoints. Install `ipykernel` in `.venv` to use
+it as a kernel. `notebooks/01-ad-data-exploration.ipynb` remains planned and is
+not implemented.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -288,11 +328,12 @@ fresh samples per class, and evaluation metrics across checkpoints. Install
 
 ### Training
 
-- CPU-only by default; no GPU required.
+- Runs on CPU by default; the notebook selects CUDA when available. No GPU
+  required.
 - Default batch size `128`; use `64` or `32` on lower-end machines if an epoch
   is slow or memory is tight.
-- Runtime depends on your CPU. Measure one epoch first, then choose the number
-  of epochs.
+- Runtime depends on the available CPU/GPU. Measure one epoch first, then choose
+  the number of epochs.
 - 20–30 epochs is the default target; checkpoint after every epoch.
 - Save a fixed-grid sample sheet every few epochs.
 - Record generator loss, discriminator loss, and discriminator accuracy.
@@ -305,7 +346,8 @@ fresh samples per class, and evaluation metrics across checkpoints. Install
 - **Mode coverage:** inspect whether each class produces varied outputs rather
   than collapsing to a single template; combine classifier-prediction spread
   with visual inspection of the fixed grid.
-- **No FID:** Inception is too slow on this CPU-only setup, so FID is not used.
+- **No FID:** Inception is too slow on the available CPU setup, so conditional
+  accuracy and mode coverage are used instead.
 
 `src/evaluate.py` implements this with a small CNN (two conv layers, 6 epochs on
 the training set) and 1,000 generated images per class. Mode coverage is measured
@@ -314,35 +356,47 @@ represented) and a per-class diversity ratio, the mean pairwise distance between
 generated images in the classifier's feature space divided by the same value for
 real test images (about 1.0 = as varied as real data, near 0 = collapse).
 
+### Reproducibility and safety
+
+- Python, NumPy, and PyTorch are seeded; DataLoader workers reseed from the
+  worker seed, and one fixed noise/label grid is reused across runs.
+- Checkpoints contain state dicts and load with
+  `torch.load(..., weights_only=True)`.
+- JSON logs use explicit UTF-8 encoding.
+- CLI numeric arguments reject zero values; use positive counts.
+- Report figures are copies of existing outputs and notebook figures; no new
+  plot types are generated.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Results
 
-Baseline run: 30 epochs, batch size 128, lr `2e-4`, CPU (~80 s/epoch). Full
-outputs, figures, and notes are in `notebooks/02-ad-cgan-experiments.ipynb`.
+Baseline run: 30 epochs, batch size 128, lr `2e-4`, CUDA (torch `2.14.1+cu130`).
+Full outputs, figures, and notes are in `notebooks/02-ad-cgan-experiments.ipynb`;
+report copies are in `reports/figures/`.
 
 | Metric | Value |
 | --- | ---: |
-| Classifier accuracy on real test images (ceiling) | 0.913 |
-| Conditional accuracy on generated images | **0.912** |
-| Prediction entropy (1.0 = balanced) | 0.998 |
-| Mean diversity ratio (1.0 = real) | 0.95 |
+| Classifier accuracy on real test images (ceiling) | 0.9129 |
+| Conditional accuracy on generated images | **0.9170** |
+| Prediction entropy (1.0 = balanced) | 0.9986 |
+| Mean diversity ratio (1.0 = real) | 0.9448 |
 
 | Epoch | 1 | 5 | 10 | 20 | 30 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Conditional accuracy | 0.775 | 0.845 | 0.901 | 0.912 | 0.912 |
-| Diversity ratio | 0.65 | 0.86 | 0.90 | 0.94 | 0.95 |
+| Conditional accuracy | 0.737 | 0.827 | 0.903 | 0.913 | 0.917 |
+| Diversity ratio | 0.648 | 0.844 | 0.898 | 0.940 | 0.945 |
 
 - The generator follows the requested label about as reliably as the classifier
-  recognizes real images; most of the gain happens by epoch 10.
-- Trouser, Ankle boot, Bag, Sandal, and Sneaker score 0.96–0.99. Pullover (0.74,
-  often read as Coat) and Shirt (0.77) are weakest; the classifier confuses the
+  recognizes real images (0.9170 vs 0.9129); most of the gain happens by epoch 10.
+- Trouser, Ankle boot, Bag, Sandal, and Sneaker score 0.97–1.00. Pullover (0.777,
+  often read as Coat) and Shirt (0.774) are weakest; the classifier confuses the
   same classes on real data.
-- No mode collapse: every class is represented and within-class variety is close
-  to real data.
-- The discriminator slowly gains on the generator (D accuracy 0.86 → 0.93), so
-  the planned variants target D: no BatchNorm on its first layer, or a lower D
-  learning rate.
+- No mode collapse: every class is represented (entropy 0.9986) and within-class
+  variety is close to real data (diversity 0.9448).
+- The discriminator slowly gains on the generator (D accuracy 0.906 → 0.934,
+  `D(G(z))` 0.24 → 0.15), so the planned variants target D: no BatchNorm on its
+  first layer, or a lower D learning rate.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -397,7 +451,19 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Implement `src/sample.py` with a fixed noise/label grid
 - [x] Implement `src/evaluate.py` (conditional accuracy + mode coverage)
 - [x] Run the first full training and record metrics
-- [ ] Complete `logs/LOG_INTERAKSI_LLM.md` and the final report
+- [x] Add annotated references and BibTeX (`references/README.md`)
+- [x] Add report-figure copies and notebook `savefig`
+- [x] Verify PyTorch APIs, safe checkpoint loading, and reproducibility
+- [ ] Consolidate the per-member LLM logs and write the final report
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## References
+
+See [`references/README.md`](references/README.md) for annotated cGAN and GAN
+papers, the Fashion-MNIST paper and dataset, official PyTorch/torchvision,
+Matplotlib, and Python API links, plus BibTeX. The repository stays link-only;
+no tutorial code or PDFs are vendored.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -417,6 +483,7 @@ and libraries retain their own licenses.
   Zalando Research
 - [PyTorch documentation](https://pytorch.org/docs/stable/index.html) — API
   reference for layers, optimizers, and data loading
+- [Annotated reference list](references/README.md) — full sources and BibTeX
 - CAK4KBB3 project guide — assignment requirements and rubric
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

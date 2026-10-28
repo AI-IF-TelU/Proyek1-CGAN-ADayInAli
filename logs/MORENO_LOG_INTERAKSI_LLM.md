@@ -196,8 +196,8 @@
 - **Analisis & Solusi:**
   - Semua 26 link references mengembalikan HTTP 200.
   - `references/README.md` di-commit sebagai `4f7dea3`.
-  - README, notebook, dan empat report figures yang diperbarui tetap uncommitted untuk review.
-  - Branch `main` ahead 8 sebelum log ini (9 setelah commit log); commit kode/referensi selesai, push dilakukan dari terminal pengguna.
+  - README, notebook, dan empat report figures yang diperbarui di-commit bersama pada commit dokumentasi ini.
+  - Commit kode/referensi selesai; push dilakukan dari environment yang memiliki akses SSH. Commit dokumentasi ini menggabungkan README, notebook 02, dan empat report figures.
 
 ## BAGIAN 2: KRONOLOGI COMMIT & ARTEFAK
 
@@ -213,8 +213,9 @@
 | 28/10/2026 | `4f05113` | UTF-8 JSON logs |
 | 28/10/2026 | `032d4af` | Validasi CLI counts |
 | 28/10/2026 | `4f7dea3` | `references/README.md` + BibTeX |
+| 28/10/2026 | commit dokumentasi | README latest run, notebook 02, empat report figures, status log |
 
-**Status repository:** 26 commit sebelum log ini; setelah log ini di-commit menjadi 27. `main` ahead 8 sebelum, 9 setelah log ini. README, notebook 02, dan empat report figures masih uncommitted untuk review; final report dan unified log belum dibuat.
+**Status repository:** log ini di-commit sebagai commit ke-27; commit dokumentasi berikutnya menggabungkan README, notebook 02, dan empat report figures. Final report dan unified log belum dibuat.
 
 **Metrik baseline terbaru:** CUDA, 30 epoch, batch 128, lr 2e-4; classifier real 0.9129; conditional 0.9170; entropy 0.9986; diversity 0.9448.
 
@@ -237,4 +238,4 @@
 - README diperbarui ke run terbaru dan memuat instruksi fresh run.
 - Notebook 01 tetap planned; notebook 02 aktif.
 - Log Moreno selesai (file ini); yang masih kurang: unified `LOG_INTERAKSI_LLM.md` dan final report.
-- README, notebook 02, dan empat report figures perlu di-commit bersama setelah review.
+- README, notebook 02, dan empat report figures di-commit bersama pada commit dokumentasi ini.
