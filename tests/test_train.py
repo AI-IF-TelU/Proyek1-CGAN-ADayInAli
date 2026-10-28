@@ -61,7 +61,7 @@ class TestTrainLoop(unittest.TestCase):
             resumed = train(tiny_loader(), epochs=3, resume=tmp / "ckpt" / "ckpt.pt", **dirs)
             self.assertEqual(len(resumed["loss_d"]), 3)
             self.assertEqual(resumed["loss_d"][:2], history["loss_d"])
-            self.assertEqual(torch.load(tmp / "ckpt" / "ckpt.pt", weights_only=False)["epoch"], 3)
+            self.assertEqual(torch.load(tmp / "ckpt" / "ckpt.pt", weights_only=True)["epoch"], 3)
 
     def test_max_batches_limits_steps(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

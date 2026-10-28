@@ -61,7 +61,7 @@ def load_checkpoint(
     opt_d: torch.optim.Optimizer | None = None,
     device: torch.device | str = "cpu",
 ) -> dict:
-    ckpt = torch.load(Path(path), map_location=device, weights_only=False)
+    ckpt = torch.load(Path(path), map_location=device, weights_only=True)
     generator.load_state_dict(ckpt["generator"])
     if discriminator is not None and "discriminator" in ckpt:
         discriminator.load_state_dict(ckpt["discriminator"])
