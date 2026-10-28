@@ -27,7 +27,7 @@ from torch.utils.data import DataLoader
 from src.config import CHECKPOINTS_DIR, CLASS_NAMES, LOGS_DIR, NUM_CLASSES, SEED
 from src.data import get_dataloader
 from src.sample import generate, load_generator
-from src.utils import get_device, set_seed
+from src.utils import copy_to_figures, get_device, set_seed
 
 CLASSIFIER_PATH = CHECKPOINTS_DIR / "classifier.pt"
 
@@ -240,6 +240,8 @@ def evaluate(
     stem = Path(checkpoint).stem
     (logs_dir / f"eval_{stem}.json").write_text(json.dumps(results, indent=2))
     save_confusion_matrix(gen_cm, logs_dir / f"confusion_{stem}.png", f"Generated samples, epoch {epoch}")
+    if stem == "ckpt" and logs_dir == LOGS_DIR:
+        copy_to_figures(logs_dir / f"confusion_{stem}.png", "confusion_matrix_final.png")
     return results
 
 

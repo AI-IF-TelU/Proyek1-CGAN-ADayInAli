@@ -154,7 +154,7 @@ grid is reused across runs so sample grids are directly comparable.
 │   ├── architecture.md        ← planned
 │   └── experiment_protocol.md ← planned
 ├── reports/
-│   └── figures/               ← curated figures for the final report
+│   └── figures/               ← report copies: loss curve, final grid, confusion matrix
 └── outputs/                   ← generated artifacts (ignored)
     ├── checkpoints/
     ├── samples/
@@ -169,7 +169,8 @@ track empty directories. `data/` and `outputs/` are intentionally ignored.
 - `src/` contains reusable code; notebooks are for exploration only.
 - `logs/LOG_INTERAKSI_LLM.md` is the graded LLM interaction log.
 - `references/` holds source links and notes, never copied code blocks.
-- `reports/figures/` holds the small set of figures used in the final report.
+- `reports/figures/` holds report-ready copies of the loss curve, final sample
+  grid, and final confusion matrix.
 - `outputs/` holds checkpoints, full sample grids, and raw training logs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -246,6 +247,13 @@ Training writes, under `outputs/`:
   the same epochs.
 - `logs/history.json` and `logs/loss_curves.png` — per-epoch mean `loss_d`,
   `loss_g`, discriminator accuracy, `D(x)`, and `D(G(z))`.
+
+Report-ready copies of those existing figures are also written to
+`reports/figures/`:
+
+- `loss_curves.png` — copy of `outputs/logs/loss_curves.png`
+- `sample_grid_final.png` — final-epoch grid from `outputs/samples/`
+- `confusion_matrix_final.png` — copy of `outputs/logs/confusion_ckpt.png`
 
 One epoch at batch size `128` took about 80 seconds on a laptop CPU, so the
 default 30 epochs take roughly 40 minutes.

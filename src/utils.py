@@ -2,10 +2,11 @@
 
 from pathlib import Path
 import random
+import shutil
 import numpy as np
 import torch
 
-from src.config import CHECKPOINTS_DIR, SEED
+from src.config import CHECKPOINTS_DIR, FIGURES_DIR, SEED
 
 
 def set_seed(seed: int = SEED) -> None:
@@ -16,6 +17,15 @@ def set_seed(seed: int = SEED) -> None:
 
 def get_device(device_str: str = "cpu") -> torch.device:
     return torch.device(device_str)
+
+
+def copy_to_figures(source: Path | str, name: str | None = None) -> Path:
+    """Copy an existing figure into reports/figures for the final report."""
+    source = Path(source)
+    destination = FIGURES_DIR / (name or source.name)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, destination)
+    return destination
 
 
 def save_checkpoint(

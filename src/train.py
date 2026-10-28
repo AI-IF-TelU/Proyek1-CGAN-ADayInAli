@@ -33,7 +33,7 @@ from src.config import (
 from src.data import get_dataloader, make_fixed_grid
 from src.models import Discriminator, Generator
 from src.plots import save_loss_curves
-from src.utils import get_device, load_checkpoint, save_checkpoint, set_seed
+from src.utils import copy_to_figures, get_device, load_checkpoint, save_checkpoint, set_seed
 
 HISTORY_KEYS = ("loss_d", "loss_g", "acc_d", "d_real", "d_fake")
 
@@ -176,6 +176,15 @@ def train(
             )
         (logs_dir / "history.json").write_text(json.dumps(history, indent=2))
         save_loss_curves(history, logs_dir / "loss_curves.png")
+
+    if history["loss_d"] and logs_dir == LOGS_DIR and samples_dir == SAMPLES_DIR:
+        loss_curve = logs_dir / "loss_curves.png"
+        if loss_curve.exists():
+            copy_to_figures(loss_curve, "loss_curves.png")
+        final_epoch = len(history["loss_d"])
+        final_grid = samples_dir / f"epoch_{final_epoch:03d}.png"
+        if final_grid.exists():
+            copy_to_figures(final_grid, "sample_grid_final.png")
 
     return history
 
