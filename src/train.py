@@ -200,7 +200,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--resume", type=Path, default=None, help="checkpoint to continue from")
     parser.add_argument("--max-batches", type=int, default=None, help="limit batches per epoch (smoke test)")
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.batch_size < 1:
+        parser.error("--batch-size must be at least 1")
+    if args.sample_every < 1:
+        parser.error("--sample-every must be at least 1")
+    if args.max_batches is not None and args.max_batches < 1:
+        parser.error("--max-batches must be at least 1")
+    return args
 
 
 def main(argv: list[str] | None = None) -> None:

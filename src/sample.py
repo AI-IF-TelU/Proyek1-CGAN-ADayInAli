@@ -72,6 +72,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     bad = [c for c in args.classes if not 0 <= c < NUM_CLASSES]
     if bad:
         parser.error(f"class ids must be 0-{NUM_CLASSES - 1}, got {bad}")
+    if args.per_class < 1:
+        parser.error("--per-class must be at least 1")
     return args
 
 

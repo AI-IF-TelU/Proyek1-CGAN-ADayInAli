@@ -264,7 +264,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--retrain-classifier", action="store_true")
     parser.add_argument("--classifier-epochs", type=int, default=6)
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.per_class < 1:
+        parser.error("--per-class must be at least 1")
+    if args.classifier_epochs < 1:
+        parser.error("--classifier-epochs must be at least 1")
+    return args
 
 
 def main(argv: list[str] | None = None) -> None:
