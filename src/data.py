@@ -1,6 +1,9 @@
 """Fashion-MNIST data loaders and deterministic sample-grid inputs."""
 
 from pathlib import Path
+import random
+
+import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
@@ -13,6 +16,13 @@ from src.config import (
     SAMPLES_PER_CLASS,
     SEED,
 )
+
+
+def _seed_worker(_worker_id: int) -> None:
+    """Seed Python and NumPy RNGs in each DataLoader worker."""
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 
 def get_transform() -> transforms.Compose:
@@ -52,6 +62,7 @@ def get_dataloader(
         shuffle=train,
         generator=gen if train else None,
         num_workers=num_workers,
+        worker_init_fn=_seed_worker,
         drop_last=False,
     )
 
