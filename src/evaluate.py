@@ -238,7 +238,7 @@ def evaluate(
     logs_dir = Path(logs_dir)
     logs_dir.mkdir(parents=True, exist_ok=True)
     stem = Path(checkpoint).stem
-    (logs_dir / f"eval_{stem}.json").write_text(json.dumps(results, indent=2))
+    (logs_dir / f"eval_{stem}.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     save_confusion_matrix(gen_cm, logs_dir / f"confusion_{stem}.png", f"Generated samples, epoch {epoch}")
     if stem == "ckpt" and logs_dir == LOGS_DIR:
         copy_to_figures(logs_dir / f"confusion_{stem}.png", "confusion_matrix_final.png")

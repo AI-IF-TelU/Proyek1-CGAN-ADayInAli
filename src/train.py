@@ -174,7 +174,7 @@ def train(
                 checkpoints_dir / f"ckpt_epoch_{epoch:03d}.pt",
                 epoch, generator, discriminator, opt_g, opt_d, history,
             )
-        (logs_dir / "history.json").write_text(json.dumps(history, indent=2))
+        (logs_dir / "history.json").write_text(json.dumps(history, indent=2), encoding="utf-8")
         save_loss_curves(history, logs_dir / "loss_curves.png")
 
     if history["loss_d"] and logs_dir == LOGS_DIR and samples_dir == SAMPLES_DIR:

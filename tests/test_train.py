@@ -55,7 +55,7 @@ class TestTrainLoop(unittest.TestCase):
             self.assertTrue((tmp / "samples" / "epoch_001.png").exists())
             self.assertTrue((tmp / "samples" / "epoch_002.png").exists())
             self.assertTrue((tmp / "logs" / "loss_curves.png").exists())
-            saved = json.loads((tmp / "logs" / "history.json").read_text())
+            saved = json.loads((tmp / "logs" / "history.json").read_text(encoding="utf-8"))
             self.assertEqual(saved["loss_d"], history["loss_d"])
 
             resumed = train(tiny_loader(), epochs=3, resume=tmp / "ckpt" / "ckpt.pt", **dirs)
