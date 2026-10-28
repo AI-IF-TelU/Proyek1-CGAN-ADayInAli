@@ -13,7 +13,7 @@ Course project for CAK4KBB3 "Vibe Coding Generative AI from Scratch", group **A 
 - Method is mandatory: code is produced by directing an LLM, never copied from tutorials. Every session must be logged.
 - Grading: vibe-coding originality 30%, LLM log 25%, model/training 25%, teamwork 20%.
 - Baseline: 30 epochs on CUDA; README reports 0.9170 conditional accuracy, 0.9986 entropy, and 0.9448 diversity (earlier CPU run: 0.912).
-- Repo: `main` tracks `origin/main` (SSH); 30 commits, scaffold `ab994d3`; HEAD is two commits ahead of `origin/main` (push from the user's terminal).
+- Repo: `main` tracks `origin/main` (SSH); 31 commits, scaffold `ab994d3`; HEAD is three commits ahead of `origin/main` (push from the user's terminal).
 - Per-member commits are graded; every change must be staged in Git as it is made — see **Git workflow** below.
 - LLM logs: all four per-member logs exist (`ALI`, `DAVU`, `MALIKI`, `MORENO`); a unified `logs/LOG_INTERAKSI_LLM.md` index is missing.
 
@@ -114,7 +114,7 @@ As of 2026-10-28, the implementation and a local 30-epoch output set are present
 - **Current state (2026-10-28):** full implementation, tests, notebook baseline, and 4 member logs are in. Missing: a unified log index and the final report. README documents the per-member logs and notes that the unified log is pending.
 - **Artifact policy (2026-10-28):** baseline `outputs/` logs and sample grids are tracked; weight files (`*.pt`) stay ignored by decision, so a clone has every metric and figure but must retrain to sample or evaluate.
 - **Report figures (2026-10-28):** `src/train.py` and `src/evaluate.py` copy the existing loss curve, final sample grid, and final confusion matrix into `reports/figures/`; the notebook saves its existing inline figures (`real_samples`, `sample_grid_progress`, `fresh_samples_per_class`, `evaluation_metrics`) there too. Raw artifacts stay under `outputs/`.
-- **Committed (2026-10-28):** `4678790` contains the README latest-run update, the notebook run, and the four refreshed report figures; `58ff81a` aligns the notebook markdown and README with those results; the latest commit (`Track baseline outputs and agent notes`) adds the baseline `outputs/` artifacts and `AGENTS.md`. The tree is clean; the last two commits still need a push.
+- **Committed (2026-10-28):** `4678790` contains the README latest-run update, the notebook run, and the four refreshed report figures; `58ff81a` aligns the notebook markdown and README with those results; the latest two commits add the baseline `outputs/` artifacts plus `AGENTS.md`, then expand the Moreno log with Sesi 0 and Sesi 8 (audit and artifact publication). The tree is clean; the last three commits still need a push.
 - **Re-baseline after pulls:** teammates may push large changes. After `git pull`, treat the pulled tree as authoritative; do not assume the scaffold, README model, folder layout, or commands in this file still match. Check `git status`, `git log --oneline --decorate -5`, and the updated `README.md`, then update this file before writing code.
 - **Plan is provisional:** the cGAN architecture, 0.93M parameter target, folder names, and entry points may change. Reconcile before implementing.
 - **Notebook workflow (2026-10-28):** the user runs `notebooks/02-ad-cgan-experiments.ipynb` manually in the Jupyter kernel "GenAI +cuda" on their laptop. Do not set up or train in the sandbox; it lacks torchvision and SSH. The committed notebook already contains the baseline outputs.
@@ -131,4 +131,4 @@ As of 2026-10-28, the implementation and a local 30-epoch output set are present
 - **No final report.** `reports/` holds only `figures/`; the roadmap's last item is unchecked.
 - **`docs/` is empty** (`.gitkeep` only); README marks `architecture.md` and `experiment_protocol.md` as planned. `notebooks/01` is intentionally not implemented.
 - **Full suite never run here.** `torchvision` is still absent in this sandbox, so only `test_models.py` (2 tests) and `compileall` are verified locally.
-- **Untracked session export.** `session-20261028-230251.md` sits in the repo root and is not ignored; by decision (2026-10-28) it stays untracked for now, so do not commit it without asking.
+- **Untracked session exports.** `session-20261028-230251.md` and `session-20261028-231607.md` sit in the repo root and are not ignored; they were the sources for the Moreno log, and the user plans to delete them after that log update. Do not commit them.

@@ -4,7 +4,7 @@
 - **NIM:** 103012340256
 - **Peran / Job Desk:** Prompt Engineer & LLM Navigator (Ketua)
 - **Tanggal Sesi:** 25/10/2026 – 28/10/2026
-- **Target Modul:** Riset metode, setup repository, review implementasi cGAN, verifikasi API PyTorch/torchvision, report figures, README, references, dan dokumentasi log.
+- **Target Modul:** Riset metode, setup repository, review implementasi cGAN, verifikasi API PyTorch/torchvision, report figures, README, references, dokumentasi log, audit konsistensi dokumentasi, dan publikasi artefak `outputs/` + `AGENTS.md`.
 - **Model AI / Environment:** Reasonix coding agent (LLM); Linux, Python 3.14.8, PyTorch 2.14.1 (CPU), uv 0.13.6. Notebook dijalankan manual di kernel Jupyter **"GenAI +cuda"** dengan PyTorch 2.14.1+cu130. `torchvision` belum terpasang di environment sandbox.
 - **Tautan Sesi Chat:** Tidak ada share link publik. Log ini adalah ekspor Markdown dari sesi Reasonix; sesuai panduan, ekspor Markdown diperbolehkan.
 
@@ -14,6 +14,25 @@
 > metrik dipertahankan.
 
 ## BAGIAN 1: RINGKASAN TERSTRUKTUR SESUAI RUBRIK
+
+### Sesi 0 — Analisis panduan, rubrik, dan aturan repository (25/10/2026)
+
+#### 1. TAHAP INISIASI
+- **Prompt Kelompok:** "Pahami `AGENTS.md`, panduan proyek, dan `.gitignore`. Jelaskan apa yang sebenarnya diminta dan apa yang belum siap."
+- **Alasan Khusus:** Sebelum menulis kode, kelompok perlu memastikan metode, deliverable, dan batasan alat sudah benar.
+- **Output Model:** Panduan menilai empat komponen: orisinalitas vibe coding 30%, log interaksi LLM 25%, fungsionalitas model/pelatihan 25%, dan kerja sama tim 20%. Deliverable mencakup kode yang berjalan, log dengan share link atau ekspor Markdown/PDF, commit per anggota, dan laporan akhir. Metode wajib vibe coding, dan **Conditional GAN Klasik** dengan Fashion-MNIST adalah salah satu opsi resmi panduan.
+
+#### 2. TAHAP PENANGANAN EROR / DEBUGGING
+- **Temuan 1:** Template log di panduan hanya memuat Tahap Inisiasi dan Debugging, sedangkan rubrik menilai inisiasi -> penanganan eror -> optimasi.
+  - **Prompt Perbaikan:** "Tambahkan bagian yang hilang agar log sesuai rubrik."
+  - **Analisis & Solusi:** Disepakati setiap sesi memakai template panduan **plus bagian ketiga "Tahap Optimasi"**; aturan ini ditulis di `AGENTS.md`.
+- **Temuan 2:** Repository belum memiliki commit, `AGENTS.md` masih menyatakan repo belum di-inisialisasi, dan `torchvision` belum terpasang.
+  - **Prompt Perbaikan:** "Catat kondisi nyata dan siapkan urutan kerja sebelum kode model ditulis."
+  - **Analisis & Solusi:** Status repo dan environment dicatat; scaffold direncanakan lebih dulu agar histori commit menunjukkan fase inisiasi -> debugging -> optimasi.
+
+#### 3. TAHAP OPTIMASI
+- **Prompt:** "Susun aturan `.gitignore` dan konvensi commit agar file lokal tidak ikut serta kontribusi per anggota terlihat."
+- **Analisis & Solusi:** Direkomendasikan agar `outputs/`, `data/`, `*.pt`, dan `*.pth` diabaikan serta dokumen lokal tidak ikut repo; implementasinya dilakukan pada Sesi 2–3. Commit per anggota memakai identitas Git masing-masing, dan konvensi pesan commit mengikuti `GIT_COMMIT_GUIDE.md`.
 
 ### Sesi 1 — Riset metode, template, dan kelayakan (25/10/2026)
 
@@ -46,9 +65,11 @@
 - **Alasan Khusus:** Repository perlu struktur yang jelas sebelum kode model ditulis, dan README adalah deliverable yang dibaca dosen.
 - **Output Model:** Dibuat struktur:
   - `data/raw/`, `notebooks/`, `src/`, `tests/`, `logs/`, `references/`, `docs/`, `reports/figures/`, `outputs/checkpoints|samples|logs/`.
+  - Struktur folder mengikuti konvensi cookiecutter-data-science (`data/`, `notebooks/`, `src/`, `references/`, `reports/`), tanpa `mkdocs`, `models/`, atau `features.py` yang tidak relevan.
   - `.gitkeep` untuk folder kosong yang perlu dilacak.
   - README berisi model, dataset, setup, usage, minimum hardware, team, workflow, roadmap, dan later references.
   - `.gitignore` untuk `data/`, `outputs/`, `*.pt`, `*.pth`, `.venv`, cache, dan file lokal.
+  - `GIT_COMMIT_GUIDE.md` dibuat dari panduan <https://cbea.ms/git-commit/> dan dipakai sebagai acuan pesan commit.
 
 #### 2. TAHAP PENANGANAN EROR / DEBUGGING
 - **Temuan:** README menampilkan `AGENTS.md` dan `GIT_COMMIT_GUIDE.md` sebagai bagian struktur, padahal keduanya file lokal yang tidak boleh ikut repo. README juga sempat menyebut target 24 thread/32 GB dan rencana tiga hari.
@@ -99,7 +120,7 @@
 
 #### 3. TAHAP OPTIMASI
 - **Prompt:** "Update AGENTS.md dengan kondisi pasca-pull; jangan menulis kode baru sebelum rencana direkonsiliasi."
-- **Analisis & Solusi:** `AGENTS.md` diperbarui: current HEAD, model 0.93M, tests, logs per anggota, torchvision missing, dan catatan re-baseline setelah pull. Repo di-review tanpa membuat perubahan yang tidak diminta.
+- **Analisis & Solusi:** `AGENTS.md` diperbarui: current HEAD, model 0.93M, tests, logs per anggota, torchvision missing, dan catatan re-baseline setelah pull. Repo di-review tanpa membuat perubahan yang tidak diminta. Duplikat `logs/LOG_INTERAKSI_ALI.md` dihapus dan di-commit sebagai `3e8ccda`, sehingga tinggal empat log per anggota dengan format final.
 
 ### Sesi 5 — Notebook run, report figures, dan checkpoint resume (28/10/2026)
 
@@ -176,12 +197,13 @@
   - `references/README.md` berisi paper cGAN/GAN/Fashion-MNIST, API docs, tabel penggunaan, aturan download, dan BibTeX.
   - README memakai metrik CUDA terbaru: 0.9170 conditional, 0.9129 classifier, 0.9986 entropy, 0.9448 diversity.
   - README menambahkan bagian **Fresh run vs. resume**, reproducibility, references, dan status notebook 01/02.
+  - Tree `logs/` di README dan `AGENTS.md` diperbarui agar memuat keempat log anggota, termasuk MORENO.
   - Log ini (`logs/MORENO_LOG_INTERAKSI_LLM.md`) dibuat sebagai ekspor Markdown lengkap.
 
 #### 2. TAHAP PENANGANAN EROR / DEBUGGING
 - **Temuan 1:** README masih memakai metrik CPU lama dan menyebut `logs/LOG_INTERAKSI_LLM.md` yang tidak ada.
   - **Prompt Perbaikan:** "Ganti dengan metrik run terbaru dan log per anggota yang benar."
-  - **Analisis & Solusi:** Results, per-epoch table, per-class notes, dan D accuracy diperbarui dari `outputs/logs/eval_ckpt.json`, `eval_ckpt_epoch_*.json`, dan `history.json`. Tree logs menampilkan ALI/DAVU/MALIKI; unified log dicatat belum ada.
+  - **Analisis & Solusi:** Results, per-epoch table, per-class notes, dan D accuracy diperbarui dari `outputs/logs/eval_ckpt.json`, `eval_ckpt_epoch_*.json`, dan `history.json`. Tree logs saat itu menampilkan ALI/DAVU/MALIKI; MORENO ditambahkan pada sesi ini; unified log dicatat belum ada.
 - **Temuan 2:** Notebook dapat resume dari checkpoint dan melewati training, tetapi pengguna tidak yakin output tetap dihasilkan.
   - **Prompt Perbaikan:** "Jelaskan resume vs fresh run dan buktikan output."
   - **Analisis & Solusi:** Notebook 0 error; metrics 0.9170; report figures diperbarui; `outputs/` tetap checkpoint epoch 30 (mtime 22:09); fresh run memerlukan `rm -rf outputs`.
@@ -189,22 +211,53 @@
   - **Prompt Perbaikan:** "Perbaiki agar `git diff --check` bersih."
   - **Analisis & Solusi:** `<br>` dipakai; commit referensi `4f7dea3` bersih.
 - **Temuan 4:** Notebook 02 bagian Observations masih menyebut CPU/0.912, sedangkan README memakai CUDA/0.917.
-  - **Status:** Dicatat sebagai pekerjaan berikutnya; notebook 02 tidak diubah karena pengguna meminta README lebih dulu dan menyatakan sudah puas dengan notebook 02.
+  - **Status:** Dicatat sebagai pekerjaan berikutnya; notebook 02 tidak diubah karena pengguna meminta README lebih dulu dan menyatakan sudah puas dengan notebook 02. Diselesaikan pada Sesi 8.
 
 #### 3. TAHAP OPTIMASI
 - **Prompt:** "Verifikasi link references, fokus README, dan jangan commit notebook/README sebelum review."
 - **Analisis & Solusi:**
   - Semua 26 link references mengembalikan HTTP 200.
   - `references/README.md` di-commit sebagai `4f7dea3`.
-  - README, notebook, dan empat report figures yang diperbarui di-commit bersama pada commit dokumentasi ini.
-  - Commit kode/referensi selesai; push dilakukan dari environment yang memiliki akses SSH. Commit dokumentasi ini menggabungkan README, notebook 02, dan empat report figures.
+  - README, notebook 02, dan empat report figures digabung pada `4678790`.
+  - Commit kode/referensi selesai; push dilakukan dari environment yang memiliki akses SSH.
+
+### Sesi 8 — Audit lintas sesi, konsistensi dokumentasi, dan publikasi artefak (28/10/2026)
+
+#### 1. TAHAP INISIASI
+- **Prompt Kelompok:** "Baca ulang ekspor sesi sebelumnya, pahami seluruh konteks, lalu beri tahu apa yang masih kurang, terlupa, atau belum selesai. Setelah itu perbaiki inkonsistensi dokumentasi dan commit."
+- **Alasan Khusus:** Sesi sebelumnya berhenti karena konteks penuh, sehingga beberapa temuan hanya dicatat dan belum dikerjakan. Audit harus dicek ke repo nyata, bukan hanya ke ringkasan percakapan.
+- **Output Model:** Audit memverifikasi 30 commit, empat log anggota, 25 artefak `outputs/`, dan metrik 0.9170. Audit menemukan tujuh celah: narasi notebook yang masih CPU/0.912, sisa angka 1,06M/80 detik di README, log Ali yang terbungkus code fence, field `Tautan Sesi Chat` yang hilang di log Davu/Maliki, unified log, final report, dan full suite yang belum pernah dijalankan di sandbox. Dua catatan housekeeping: `docs/` masih kosong dan session export belum dilacak.
+
+#### 2. TAHAP PENANGANAN EROR / DEBUGGING
+- **Temuan 1:** Markdown notebook 02 (cell 3 dan 22) masih menyebut CPU, ~80 detik/epoch, conditional 0.912, entropy 0.998, diversity 0.95, Pullover 0.74, dan Shirt 0.77; sedangkan output di notebook yang sama adalah CUDA, 0.9170, 0.9986, 0.9448, Pullover 0.777, dan Shirt 0.774.
+  - **Prompt Perbaikan:** "Samakan narasi notebook dengan output nyata; jangan ubah kode atau output."
+  - **Analisis & Solusi:** Cell 3 dan 22 ditulis ulang dari `history.json` dan `eval_ckpt.json`: baseline CUDA, 0.9170, 0.9986, 0.9448, kurva 0.737 -> 0.903 -> 0.917, D accuracy minimum 0.868 (epoch 6), `D(G(z))` 0.151, dan G loss 1.70 -> 2.52. Referensi ke `logs/LOG_INTERAKSI_LLM.md` diganti dengan log per anggota. Commit `58ff81a`.
+- **Temuan 2:** README masih menyisakan "1.06M-parameter reference ... 80 s/epoch on a laptop CPU".
+  - **Prompt Perbaikan:** "Hapus sisa angka perencanaan dan detail mesin lokal dari README."
+  - **Analisis & Solusi:** Kalimat diganti dengan "measure your first epoch and plan the run length accordingly". Commit `58ff81a`.
+- **Temuan 3:** Log Ali masih diawali teks chat ("My bad bro ... one single code box"), header-nya berada di dalam code fence, dan diakhiri fence kosong. Log Davu/Maliki tidak memiliki field `Tautan Sesi Chat`.
+  - **Prompt Perbaikan:** "Catat sebagai temuan audit; jangan ubah log anggota lain tanpa persetujuan."
+  - **Analisis & Solusi:** Dicatat sebagai gap yang harus diperbaiki oleh pemilik log masing-masing. Verifikasi: notebook 11/11 code cell valid, `git diff --check` bersih, dan model tests 2/2 lulus.
+
+#### 3. TAHAP OPTIMASI
+- **Prompt:** "Publikasikan `outputs/` dan `AGENTS.md` untuk transparansi artefak dan penggunaan AI; jangan masukkan bobot model."
+- **Analisis & Solusi:**
+  - `outputs/` dan `AGENTS.md` dihapus dari `.gitignore`.
+  - 25 artefak (~1,2 MB) di-commit: `history.json`, `loss_curves.png`, 8 `eval_*.json`, 8 `confusion_*.png`, dan 7 `epoch_*.png`.
+  - Sembilan file bobot `*.pt` (~90 MB) tetap diabaikan atas keputusan bersama; clone tetap mendapat semua metrik dan figure, tetapi harus retrain untuk sample/evaluate.
+  - README diperbarui: `outputs/` adalah artefak baseline yang dilacak, `checkpoints/` berisi bobot yang diabaikan, dan instruksi `rm -rf outputs` tetap berlaku untuk fresh run.
+  - `AGENTS.md` kini publik dan mencatat kebijakan artefak, batas environment, serta known gaps.
+  - Session export tetap tidak dilacak atas keputusan pengguna dan akan dihapus setelah log ini selesai.
+  - Commit `a6efe23` (28 file, 1.769 baris).
+- **Catatan:** `eval_*.json` memuat path absolut `/home/mclr/...`; tidak diubah karena output notebook yang sudah di-commit memuat path yang sama.
+- **Verifikasi:** model tests 2/2, `git diff --check` bersih, 25 file `outputs/` terlacak, 0 file `*.pt` terlacak, dan tidak ada klaim "outputs ignored" yang tersisa di README.
 
 ## BAGIAN 2: KRONOLOGI COMMIT & ARTEFAK
 
 | Tanggal | Commit / Artefak | Isi |
 | --- | --- | --- |
 | 25/10/2026 | `ab994d3` | Initial scaffold: `.gitignore`, README, `.gitkeep` |
-| 28/10/2026 | `96ed552` | README title update dari tim |
+| 25/10/2026 | `96ed552` | README title update dari tim |
 | 28/10/2026 | `3e8ccda` | Hapus duplikat `LOG_INTERAKSI_ALI.md` |
 | 28/10/2026 | `d945f0c` | Copy loss curve, final grid, confusion matrix ke `reports/figures/` |
 | 28/10/2026 | `173e68e` | Empat figure notebook ke `reports/figures/` |
@@ -213,9 +266,12 @@
 | 28/10/2026 | `4f05113` | UTF-8 JSON logs |
 | 28/10/2026 | `032d4af` | Validasi CLI counts |
 | 28/10/2026 | `4f7dea3` | `references/README.md` + BibTeX |
-| 28/10/2026 | commit dokumentasi | README latest run, notebook 02, empat report figures, status log |
+| 28/10/2026 | `370e2c3` | Log Moreno (commit ke-27) |
+| 28/10/2026 | `4678790` | README latest run + notebook 02 + empat report figures (commit ke-28) |
+| 28/10/2026 | `58ff81a` | Narasi notebook dan README diselaraskan ke CUDA/0.917 (commit ke-29) |
+| 28/10/2026 | `a6efe23` | `outputs/` (25 artefak) + `AGENTS.md` dilacak; `.gitignore` diperbarui (commit ke-30) |
 
-**Status repository:** log ini di-commit sebagai commit ke-27; commit dokumentasi berikutnya menggabungkan README, notebook 02, dan empat report figures. Final report dan unified log belum dibuat.
+**Status repository:** hingga akhir Sesi 8, HEAD adalah `a6efe23` (commit ke-30), `outputs/` dan `AGENTS.md` sudah dilacak, dan `*.pt` tetap diabaikan. Commit ke-31 memperbarui log ini. Tiga commit terakhir (`58ff81a`, `a6efe23`, dan commit log ini) menunggu push dari terminal pengguna. Final report dan unified log belum dibuat.
 
 **Metrik baseline terbaru:** CUDA, 30 epoch, batch 128, lr 2e-4; classifier real 0.9129; conditional 0.9170; entropy 0.9986; diversity 0.9448.
 
@@ -230,12 +286,16 @@
 6. **Reproducibility:** seed Python/NumPy/PyTorch, worker seeding, fixed grid, `weights_only=True`, UTF-8 JSON.
 7. **Dokumentasi:** `references/README.md` link-only dan BibTeX; log per anggota diperlukan; unified log dan final report masih kurang.
 8. **Verifikasi:** Context7 dan dokumentasi resmi menangkap `weights_only`, `value_range`, `set_xticks`, dan `encoding`; full unittest tetap membutuhkan `torchvision`.
+9. **Audit lintas sesi:** Ringkasan percakapan tidak cukup; setiap klaim harus dicek ke `git log`, file, dan artefak. Audit menemukan narasi notebook yang tertinggal satu run dan satu tanggal commit yang salah.
+10. **Konsistensi dokumentasi:** README, notebook, dan `AGENTS.md` harus memakai angka yang sama; sumber kebenaran adalah `outputs/logs/*.json` dan `history.json`.
+11. **Artefak vs bobot:** Artefak kecil (log, figure, grid) layak dilacak agar repo punya bukti hasil; bobot `*.pt` tetap diabaikan agar history tidak membengkak.
 
 ### Status akhir
 - Implementasi, tests, notebook 02, references, dan report figures selesai.
 - Baseline CUDA 30 epoch terekam; metrik terbaru 0.9170 conditional accuracy.
-- `references/README.md` committed; kode hardening committed.
-- README diperbarui ke run terbaru dan memuat instruksi fresh run.
+- Notebook 02 dan README sudah konsisten dengan run CUDA 0.9170.
+- `outputs/` (25 artefak, ~1,2 MB) dan `AGENTS.md` dilacak; sembilan bobot `*.pt` (~88 MB) tetap diabaikan.
+- README, notebook 02, dan empat report figures di-commit pada `4678790`; penyelarasan dokumentasi pada `58ff81a`; publikasi artefak pada `a6efe23`.
 - Notebook 01 tetap planned; notebook 02 aktif.
-- Log Moreno selesai (file ini); yang masih kurang: unified `LOG_INTERAKSI_LLM.md` dan final report.
-- README, notebook 02, dan empat report figures di-commit bersama pada commit dokumentasi ini.
+- Log Moreno selesai (file ini); yang masih kurang: unified `LOG_INTERAKSI_LLM.md`, final report, perbaikan format log Ali, dan field `Tautan Sesi Chat` untuk Davu/Maliki.
+- Full unittest belum dijalankan di sandbox (torchvision tidak tersedia); pengguna diminta menjalankannya di kernel "GenAI +cuda".
