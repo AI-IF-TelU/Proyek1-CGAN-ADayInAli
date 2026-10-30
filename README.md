@@ -158,6 +158,9 @@ grid is reused across runs so sample grids are directly comparable.
 ├── docs/
 │   ├── architecture.md        ← planned
 │   └── experiment_protocol.md ← planned
+├── report/
+│   ├── README.md              ← final project report (Markdown)
+│   └── Proyek1_CGAN_A_Day_in_Ali_Tata_final.pptx ← presentation slides
 ├── reports/
 │   └── figures/               ← report copies: loss curve, grids, confusion matrix, metrics
 └── outputs/                   ← baseline run artifacts (tracked)
@@ -454,7 +457,7 @@ handling — are recorded in the LLM interaction log as the project progresses.
 - [x] Add annotated references and BibTeX (`references/README.md`)
 - [x] Add report-figure copies and notebook `savefig`
 - [x] Verify PyTorch APIs, safe checkpoint loading, and reproducibility
-- [ ] Consolidate the per-member LLM logs and write the final report
+- [x] Consolidate the per-member LLM logs and write the final report (`report/README.md` & `report/Proyek1_CGAN_A_Day_in_Ali_Tata_final.pptx`)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
